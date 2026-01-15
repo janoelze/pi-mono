@@ -240,6 +240,7 @@ export class Editor implements Component {
 
 	public onSubmit?: (text: string) => void;
 	public onChange?: (text: string) => void;
+	public onHistoryAdd?: (text: string) => void;
 	public disableSubmit: boolean = false;
 
 	constructor(theme: EditorTheme) {
@@ -265,6 +266,24 @@ export class Editor implements Component {
 		if (this.history.length > 100) {
 			this.history.pop();
 		}
+		// Notify listener for persistence
+		this.onHistoryAdd?.(trimmed);
+	}
+
+	/**
+	 * Set the entire history array (e.g., when loading from persistent storage).
+	 * Most recent entries should be first.
+	 */
+	setHistory(history: string[]): void {
+		this.history = [...history];
+		this.historyIndex = -1;
+	}
+
+	/**
+	 * Get a copy of the current history array.
+	 */
+	getHistory(): string[] {
+		return [...this.history];
 	}
 
 	private isEditorEmpty(): boolean {

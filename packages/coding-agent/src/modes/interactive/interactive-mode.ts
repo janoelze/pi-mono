@@ -51,6 +51,7 @@ import type {
 	ExtensionUIDialogOptions,
 } from "../../core/extensions/index.js";
 import { FooterDataProvider, type ReadonlyFooterDataProvider } from "../../core/footer-data-provider.js";
+import { InputHistoryManager } from "../../core/input-history.js";
 import { type AppAction, KeybindingsManager } from "../../core/keybindings.js";
 import { createCompactionSummaryMessage } from "../../core/messages.js";
 import { resolveModelScope } from "../../core/model-resolver.js";
@@ -144,6 +145,7 @@ export class InteractiveMode {
 	private footer: FooterComponent;
 	private footerDataProvider: FooterDataProvider;
 	private keybindings: KeybindingsManager;
+	private inputHistory: InputHistoryManager;
 	private version: string;
 	private isInitialized = false;
 	private onInputCallback?: (text: string) => void;
@@ -248,6 +250,13 @@ export class InteractiveMode {
 		this.footerDataProvider = new FooterDataProvider();
 		this.footer = new FooterComponent(session, this.footerDataProvider);
 		this.footer.setAutoCompactEnabled(session.autoCompactionEnabled);
+
+		// Initialize persistent input history
+		this.inputHistory = InputHistoryManager.create();
+		this.defaultEditor.setHistory(this.inputHistory.getAll());
+		this.defaultEditor.onHistoryAdd = (text: string) => {
+			this.inputHistory.add(text);
+		};
 
 		// Load hide thinking block setting
 		this.hideThinkingBlock = this.settingsManager.getHideThinkingBlock();

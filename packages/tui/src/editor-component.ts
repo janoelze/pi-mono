@@ -36,6 +36,15 @@ export interface EditorComponent extends Component {
 	/** Add text to history for up/down navigation */
 	addToHistory?(text: string): void;
 
+	/** Set the entire history array (for loading from persistent storage) */
+	setHistory?(history: string[]): void;
+
+	/** Get a copy of the current history */
+	getHistory?(): string[];
+
+	/** Callback when a new entry is added to history (for persistence) */
+	onHistoryAdd?: (text: string) => void;
+
 	// =========================================================================
 	// Advanced text manipulation (optional)
 	// =========================================================================
