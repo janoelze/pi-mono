@@ -459,47 +459,45 @@ export class ToolExecutionComponent extends Container {
 			text = `${theme.fg("toolTitle", theme.bold("read"))} ${pathDisplay}`;
 
 			if (this.result) {
+				// Show line count info
 				const output = this.getTextOutput();
-				const rawPath = this.args?.file_path || this.args?.path || "";
-				const lang = getLanguageFromPath(rawPath);
-				const lines = lang ? highlightCode(replaceTabs(output), lang) : output.split("\n");
+				const lines = output.split("\n");
+				const lineCount = lines.length;
+				text += theme.fg("muted", ` (${lineCount} lines)`);
 
-				const maxLines = this.expanded ? lines.length : 10;
-				const displayLines = lines.slice(0, maxLines);
-				const remaining = lines.length - maxLines;
+				// Only show content when expanded
+				if (this.expanded) {
+					const rawPath = this.args?.file_path || this.args?.path || "";
+					const lang = getLanguageFromPath(rawPath);
+					const highlightedLines = lang ? highlightCode(replaceTabs(output), lang) : lines;
 
-				text +=
-					"\n\n" +
-					displayLines
-						.map((line: string) => (lang ? replaceTabs(line) : theme.fg("toolOutput", replaceTabs(line))))
-						.join("\n");
-				if (remaining > 0) {
-					text += `${theme.fg("muted", `\n... (${remaining} more lines,`)} ${keyHint("expandTools", "to expand")})`;
+					text +=
+						"\n\n" +
+						highlightedLines
+							.map((line: string) => (lang ? replaceTabs(line) : theme.fg("toolOutput", replaceTabs(line))))
+							.join("\n");
 				}
 
 				const truncation = this.result.details?.truncation;
 				if (truncation?.truncated) {
 					if (truncation.firstLineExceedsLimit) {
 						text +=
-							"\n" +
+							" " +
 							theme.fg(
 								"warning",
 								`[First line exceeds ${formatSize(truncation.maxBytes ?? DEFAULT_MAX_BYTES)} limit]`,
 							);
 					} else if (truncation.truncatedBy === "lines") {
 						text +=
-							"\n" +
+							" " +
 							theme.fg(
 								"warning",
-								`[Truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${truncation.maxLines ?? DEFAULT_MAX_LINES} line limit)]`,
+								`[Truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines]`,
 							);
 					} else {
 						text +=
-							"\n" +
-							theme.fg(
-								"warning",
-								`[Truncated: ${truncation.outputLines} lines shown (${formatSize(truncation.maxBytes ?? DEFAULT_MAX_BYTES)} limit)]`,
-							);
+							" " +
+							theme.fg("warning", `[Truncated: ${formatSize(truncation.maxBytes ?? DEFAULT_MAX_BYTES)} limit]`);
 					}
 				}
 			}
