@@ -17,6 +17,7 @@ echo "Installing extensions to ~/.pi/agent/extensions/..."
 mkdir -p ~/.pi/agent/extensions
 cp ./packages/coding-agent/examples/extensions/ralph-wiggum.ts ~/.pi/agent/extensions/
 cp ./packages/coding-agent/examples/extensions/handoff.ts ~/.pi/agent/extensions/
+cp ./packages/coding-agent/examples/extensions/checkpoint.ts ~/.pi/agent/extensions/
 
 echo "Done! Installed pi from local repo:"
 which pi
