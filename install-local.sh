@@ -13,6 +13,14 @@ npm run build
 echo "Installing local pi-coding-agent globally..."
 npm install -g ./packages/coding-agent
 
+echo "Installing extensions to ~/.pi/agent/extensions/..."
+mkdir -p ~/.pi/agent/extensions
+cp ./packages/coding-agent/examples/extensions/ralph-wiggum.ts ~/.pi/agent/extensions/
+cp ./packages/coding-agent/examples/extensions/handoff.ts ~/.pi/agent/extensions/
+
 echo "Done! Installed pi from local repo:"
 which pi
 pi --version
+echo ""
+echo "Extensions installed:"
+ls -la ~/.pi/agent/extensions/*.ts 2>/dev/null || echo "  (none)"
